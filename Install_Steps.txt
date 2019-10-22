@@ -1,0 +1,31 @@
+
+#OpenShift Project dedicated to ADO agents
+oc new-project ado-agents
+
+#Registry.access.redhat.com Service Account to be able to pull images from Red Hat Container Catalog
+oc create -f ocp-svc-pull-secret.yaml
+oc secret link sa/default secret/ocp-svc-pull-secret --for=pull
+oc secret link sa/builder secret/ocp-svc-pull-secret
+
+#Token from Azure DevOps
+#Create separate secrets for Agent Type - oc or python
+oc create secret generic <agent type>-ado-agent-access-token --from-literal=token=<ADO Token>
+oc create sa azure-devops
+
+#Secret for Private Github Repository
+oc create secret generic github-secret --from-literal=username=<user_name> --from-literal=password=<password>
+oc set build-secret --source bc/<agent type>-ado-agent github-secret
+
+//create python ado agents
+oc new-build https://github.com/chamilton0729/ado-agents.git --context-dir=python-ado-agent --name=python-ado-agent
+oc create -f https://raw.githubusercontent.com/chamilton0729/ado-agents/master/python-dc.yaml
+
+oc logs bc/python-ado-agent --follow
+oc logs dc/python-ado-agent --follow
+
+//create oc ado agents
+oc new-build https://github.com/chamilton0729/ado-agents.git --context-dir=oc-ado-agent --name=oc-ado-agent
+oc create -f https://raw.githubusercontent.com/chamilton0729/ado-agents/master/oc-dc.yaml
+
+oc logs bc/oc-ado-agent --follow
+oc logs dc/oc-ado-agent --follow

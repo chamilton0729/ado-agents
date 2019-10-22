@@ -1,0 +1,46 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: oc-ado-agent
+spec:
+  template:
+    metadata:
+      labels:
+        name: oc-ado-agent
+    spec:
+      serviceAccountName: azure-devops
+      containers:
+      - name: oc-ado-agent
+        image: ado-agent/oc-ado-agent
+        env:
+        - name: ACCESS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              key: token
+              name: oc-ado-agent-access-token
+        - name: AGENT_POOL
+          value: default
+        - name: AGENT_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: SERVER_URL
+          value: https://dev.azure.com/ChadHamilton
+        lifecycle:
+          preStop:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - ./config.sh remove --unattended --token $ACCESS_TOKEN
+  replicas: 5
+  triggers:
+  - type: ConfigChange
+  - type: ImageChange
+    imageChangeParams:
+      automatic: true
+      containerNames:
+      - oc-ado-agent
+      from:
+        kind: ImageStreamTag
+        name: oc-ado-agent:latest
