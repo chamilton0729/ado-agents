@@ -1,4 +1,4 @@
-FROM registry.redhat.io/openshift3/ose-cli:v3.11.141-2
+FROM registry.redhat.io/openshift3/ose-cli:v3.11.153-2
 
 #Set a Default Azure DevOps Agent Version for Download
 ARG AZURE_DEVOPS_AGENT_VERSION=2.155.1
