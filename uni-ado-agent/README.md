@@ -3,8 +3,10 @@ _Note: These steps assume the use of an OpenShift Cluster to build and deploy th
 
 1. Obtain an ADO Personal Access Token from your ADO account
 2. Clone this [Repo](https://github.com/chamilton0729/ado-agents)
-		git clone https://github.com/chamilton0729/ado-agents
-		cd ./ado-agents/uni-ado-agent
+```
+git clone https://github.com/chamilton0729/ado-agents
+cd ./ado-agents/uni-ado-agent
+```
 3. Login to OpenShift Cluster
 `oc login -u <username> <OpenShift Cluster URL>`
 4. Create an OpenShift Project for the ADO Agents
