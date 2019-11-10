@@ -3,7 +3,7 @@ _Note: These steps assume the use of an OpenShift Cluster to build and deploy th
 
 1. Obtain an ADO Personal Access Token from your ADO account
 2. Clone this [Repo](https://github.com/chamilton0729/ado-agents)
-``` git clone https://github.com/chamilton0729/ado-agents cd ./ado-agents/uni-ado-agent ```
+   ``` git clone https://github.com/chamilton0729/ado-agents cd ./ado-agents/uni-ado-agent ```
 3. Login to OpenShift Cluster
 `oc login -u <username> <OpenShift Cluster URL>`
 4. Create an OpenShift Project for the ADO Agents
@@ -13,7 +13,7 @@ _NOTE:  This is using a Service Account acquired from Red Hat Container Catalog 
 `oc create -f rh-registry-svc-secret.yaml`
 6. Link the Red Hat Container Catalog Service Secret to the Default Service Account
 `oc secret link sa/default secret/rh-registry-svc-secret --for=pull`
-7. 
+7. Link the Red Hat Container Catalog Service Secret to the Default Builder Account 
 `oc secret link sa/builder secret/rh-registry-svc-secret`
 8. oc create secret generic uni-ado-agent-access-token --from-literal=ACCESS_TOKEN=<Paste your PAT from Step 1>
     e.g. ajxq6ka...
