@@ -3,6 +3,9 @@ FROM registry.redhat.io/openshift3/ose-cli:v3.11.153-2
 #Set a Default Azure DevOps Agent Version for Download
 ARG AZURE_DEVOPS_AGENT_VERSION=2.155.1
 
+#Set the Apache Maven Version
+ENV MAVEN_VERSION=3.6.1
+
 COPY docker-entrypoint.sh /ado-agent/entrypoint.sh
 
 #Run commands with the first checking to get the latest Azure DevOps Agent version if there is a newer one
@@ -20,13 +23,19 @@ RUN AZURE_DEVOPS_AGENT_VERSION=$(curl -k https://github.com/Microsoft/azure-pipe
 	&& wget -nv https://get.helm.sh/helm-v3.0.0-beta.3-linux-amd64.tar.gz -O /ado-agent/helm-v3-linux-amd64.tar.gz \
 	&& tar -zxf helm-v3-linux-amd64.tar.gz \ 
         && yum-config-manager --enable rhel-server-rhscl-7-rpms \
+	&& yum-config-manager --enable rhel-7-server-extras-rpms \
 	&& yum install rh-git218 dos2unix -y \
 	&& ./bin/installdependencies.sh \
-	&& yum install -y docker-1.13.1 \
-	&& yum install -y ant \
-	&& yum install -y maven \
-	&& yum install -y ruby \
-        && yum clean all \
+        && yum install -y ant \
+        && curl -o apache-maven-${MAVEN_VERSION}-bin.tar.gz -sSL http://mirrors.ibiblio.org/apache/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz \
+        && tar xzf apache-maven-${MAVEN_VERSION}-bin.tar.gz -C /opt \
+        && ln -s /opt/apache-maven-${MAVEN_VERSION} /opt/apache-maven-current \
+        && ln -s /opt/apache-maven-current/bin/mvn /usr/local/bin/mvn \
+        && ln -s /opt/apache-maven-current/bin/mvnDebug /usr/local/bin/mvnDebug \
+        && export M2_HOME=/opt/apache-maven-current \
+        && export MAVEN_HOME=${M2_HOME} \
+        && yum install -y buildah podman skopeo \
+	&& yum clean all \
 	&& rm /ado-agent/vsts-agent-linux-x64.tar.gz \
 	&& rm /ado-agent/helm-v3-linux-amd64.tar.gz \
 	&& mkdir -p /.kube \
