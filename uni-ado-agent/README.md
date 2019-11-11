@@ -39,7 +39,7 @@ _Note: These steps assume the use of an OpenShift Cluster to build and deploy th
 ```
 10. Create the Build Configuration of the Universal ADO Agent Docker Image
 ```
-  oc new-build <URL to GIT> --context-dir=uni-azure-ocp-agent --strategy=docker --name=uni-ado-agent
+  oc new-build <URL to GIT> --context-dir=uni-ado-agent --strategy=docker --name=uni-ado-agent
 ```
 11. Start the Build of the Universal ADO Agent Docker Image
 ```
